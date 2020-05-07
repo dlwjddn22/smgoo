@@ -1,6 +1,9 @@
 package com.smgoo.querycmd.controller;
 
+import java.util.List;
+
 import com.fasterxml.jackson.core.sym.Name;
+import com.smgoo.querycmd.domain.HREmployee;
 import com.smgoo.querycmd.mapper.OracleTestMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +20,14 @@ public class MainController {
     private OracleTestMapper mapper;
 
     @RequestMapping(value = "/")
-    public String main(@RequestParam(required = false, defaultValue = "") String uid, Model model) throws Exception {
+    public String main(@RequestParam(required = false, defaultValue = "0") int employeeId, Model model)
+            throws Exception {
         String name = "";
 
-        if (uid.equals("")) {
+        if (employeeId == 0) {
             name = "아이디 없음";
         } else {
-            name = mapper.getUname(uid); // db 조회결과를 view에 보낸다.
+            name = mapper.getUname(employeeId); // db 조회결과를 view에 보낸다.
         }
 
         if (name == null) {
@@ -31,6 +35,10 @@ public class MainController {
         }
 
         model.addAttribute("name", name);
+        model.addAttribute("employeeId", employeeId == 0 ? "" : employeeId);
+
+        List<HREmployee> empList = mapper.getAllList();
+        model.addAttribute("empList", empList);
 
         return "index";
     }

@@ -24,14 +24,52 @@
       integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
       crossorigin="anonymous"
     ></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+    <script th:src="@{/js/paging.js}"></script>
+    <style type="text/css">
+        .paging-nav {
+          text-align: right;
+          padding-top: 2px;
+        }
+
+        .paging-nav a {
+          margin: auto 1px;
+          text-decoration: none;
+          display: inline-block;
+          padding: 1px 7px;
+          background: #343a40;
+          color: white;
+          border-radius: 3px;
+        }
+
+        .paging-nav .selected-page {
+          background: #187ed5;
+          font-weight: bold;
+        }
+    </style>
+    <script>
+      $(document).ready(function(){
+        $("input:text[numberOnly]").on("keyup", function() {
+            $(this).val($(this).val().replace(/[^0-9]/g,""));
+        });
+        $('#empFullList').paging({
+          limit: 10,
+          rowDisplayStyle: 'block',
+          activePage: 0,
+          rows: []
+        });
+      });
+    </script>
   </head>
   <body>
     <div class="container">
-      <h1>제목</h1>
+      <h1>DBMS Test </h1>
+      <h5>oracle > HR > EMPLOYEES</h3>
       <hr />
       <div class="card">
         <div class="card-header">
-          <b>DBMS 테스트</b>
+          <b>Name Search</b>
         </div>
         <div class="card-body">
           <form method="GET">
@@ -40,9 +78,10 @@
               <input
                 class="form-control"
                 id="exampleFormControlInput1"
-                type="text"
-                name="uid"
+                type="text" numberOnly
+                name="employeeId"
                 placeholder="아이디를 입력해 주세요."
+                th:value="${employeeId}"
               />
             </div>
             <button type="submit" class="btn btn-primary">
@@ -50,79 +89,42 @@
             </button>
           </form>
         </div>
-
         <div class="card">
             <div class="card-header">
-              <b>Table 예제</b>
+              <b>Full Data List</b>
             </div>
             <div class="card-body">
-                <table class="table">
+                <table class="table" id="empFullList">
                     <thead class="thead-dark">
                       <tr>
                         <th scope="col">#</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Handle</th>
+                        <th scope="col">employeeId</th>
+                        <th scope="col">firstName</th>
+                        <th scope="col">lastName</th>
+                        <th scope="col">email</th>
+                        <th scope="col">hireDate</th>
+                        <th scope="col">jobId</th>
+                        <th scope="col">salary</th>
+                        <th scope="col">commissionPct</th>
+                        <th scope="col">managerId</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">3</th>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  
-                  <table class="table">
-                    <thead class="thead-light">
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Handle</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">3</th>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
+                      <tr th:each="item, num: ${empList}">
+                        <th scope="row" th:text="${num.count}"></th>
+                        <td th:text="${item.employeeId}"></td>
+                        <td th:text="${item.firstName}"></td>
+                        <td th:text="${item.lastName}"></td>
+                        <td th:text="${item.email}"></td>
+                        <td th:text="${#calendars.format(item.hireDate, 'yyyy-MM-dd')}"></td>
+                        <td th:text="${item.jobId}"></td>
+                        <td th:text="${#numbers.formatInteger(item.salary, 0, 'COMMA')}"></td>
+                        <td th:text="${item.commissionPct}"></td>
+                        <td th:text="${item.managerId}"></td>
                       </tr>
                     </tbody>
                   </table>
             </div>
       </div>
-      <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button"  th:href="@{https://getbootstrap.com/docs/4.4/content/tables/}" target="_blank" class="btn btn-secondary">bootstrap(참고용)</button>
-        <button type="button" class="btn btn-secondary">Middle</button>
-        <button type="button" class="btn btn-secondary">Right</button>
-      </div>  
   </body>
 </html>
